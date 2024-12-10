@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Bootstrap demo</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body class="container">
+    <h1 class="mt-5">Hello, world!</h1>
+    <hr />
+
+    <form action="" id="miFormulario">
+      <div class="row">
+        <div class="col-8">
+          <input id="txtMensaje" type="text" class="form-control" placeholder="Mensaje..." name="nombre" />
+        </div>
+
+        <div class="col-4">
+          <button type="submit" class="btn btn-primary">Enviar</button>
+        </div>
+      </div>
+    </form>
+
+    <div class="row">
+      <div class="col">
+        <!-- Lista de mensajes -->
+        <ul id="misMensajes"></ul>
+      </div>
+    </div>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+      crossorigin="anonymous"
+    ></script>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      const socket = io("http://localhost:5432");
+      const $formulario = document.getElementById("miFormulario");
+      const $txtMensaje = document.getElementById("txtMensaje");
+      const $misMensajes = document.getElementById("misMensajes");
+
+      $formulario.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const nuevoMensaje = $txtMensaje.value;
+        console.log(nuevoMensaje);
+        socket.emit("mensaje-to-server", {
+          texto: nuevoMensaje,
+          nombre: "Javier",
+        });
+        $txtMensaje.value = "";
+      });
+
+      socket.on("mensaje-from-server", (data) => {
+        console.log(data);
+
+        $misMensajes.innerHTML += `<li>${data.nombre}: ${data.texto}</li>`;
+      });
+    </script>
+  </body>
+</html>
